@@ -15,8 +15,8 @@ Google places autocomplete widgets for flutter.
 According to https://stackoverflow.com/a/52545293, you need to enable billing on your account, even if you are only using the free quota.
 
 ```dart
-// replace flutter_google_places by flutter_google_places_hoc081098
-import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+// replace flutter_google_places by flutter_google_places_darkzy
+import 'package:flutter_google_places_darkzy/flutter_google_places_darkzy.dart';
 
 const kGoogleApiKey = 'API_KEY';
 
@@ -29,12 +29,12 @@ void onError(PlacesAutocompleteResponse response) {
 }
 
 final Prediction? p = await PlacesAutocomplete.show(
-  context: context,
-  apiKey: kGoogleApiKey,
-  onError: onError,
-  mode: Mode.overlay, // or Mode.fullscreen
-  language: 'fr',
-  components: [Component(Component.country, 'fr')],
+context: context,
+apiKey: kGoogleApiKey,
+onError: onError,
+mode: Mode.overlay, // or Mode.fullscreen
+language: 'fr',
+components: [Component(Component.country, 'fr')],
 );
 
 ```
