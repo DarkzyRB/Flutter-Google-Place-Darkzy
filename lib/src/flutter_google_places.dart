@@ -5,12 +5,14 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_pattern/flutter_bloc_pattern.dart';
+import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart';
 import 'package:listenable_stream/listenable_stream.dart';
 import 'package:rxdart_ext/single.dart';
 import 'package:rxdart_ext/state_stream.dart';
+
+import '../extensions/using_extension.dart';
 
 class PlacesAutocompleteWidget extends StatefulWidget {
   /// The API key to use for the Places API.
@@ -595,26 +597,25 @@ abstract class PlacesAutocompleteState extends State<PlacesAutocompleteWidget> {
       return true;
     }());
 
-    return Rx.using(
-      () => GoogleMapsPlaces(
-        apiKey: widget.apiKey,
-        baseUrl: widget.proxyBaseUrl,
-        httpClient: widget.httpClient,
-        apiHeaders: <String, String>{
-          ...headers,
-          ...?widget.headers,
-        },
-      ),
-      (GoogleMapsPlaces places) =>
-          Rx.never<GoogleMapsPlaces>().startWith(places),
-      (GoogleMapsPlaces places) {
-        assert(() {
-          debugPrint('[flutter_google_places_hoc081098] disposed');
-          return true;
-        }());
-        return places.dispose();
-      },
-    );
+    return UsingExtension.using<GoogleMapsPlaces, GoogleMapsPlaces>(
+          () => GoogleMapsPlaces(
+            apiKey: widget.apiKey,
+            baseUrl: widget.proxyBaseUrl,
+            httpClient: widget.httpClient,
+            apiHeaders: <String, String>{
+              ...headers,
+              ...?widget.headers,
+            },
+          ),
+          (places) => Rx.never<GoogleMapsPlaces>().startWith(places),
+          (places) {
+            assert(() {
+              debugPrint('[flutter_google_places_hoc081098] disposed');
+              return true;
+            }());
+            return places.dispose();
+          },
+        );
   }
 
   Stream<_SearchState> doSearch(String value, GoogleMapsPlaces places) async* {
